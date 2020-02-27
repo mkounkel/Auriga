@@ -8,12 +8,12 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+  --tutorial            Use included test.fits or test.csv files as inputs
   --tableOut TABLEOUT   Prefix of the csv file into which the cluster
-                        properties should be written
+                        properties should be written, default tableIn-out
   --iters ITERS         Number of iterations of each cluster is passed through
                         Auriga to generate the errors, default 10
-  --downloadFlux DOWNLOADFLUX
-                        Download necessary flux from Gaia archive for all
+  --localFlux           Download necessary flux from Gaia archive for all
                         source ids, default True
   --saveFlux SAVEFLUX   If downloading flux, prefix of file where to save it,
                         default empty
@@ -59,19 +59,19 @@ optional arguments:
 ## Examples:
 Downloading photometry from the Gaia Archive for the sources defined in the fits table, saving the fluxes, and generating the outputs
 ```
-auriga.py test.fits --saveFlux 'test' 
+auriga test.fits --tableOut test-out --saveFlux test --tutorial 
 ```
 
 Using previously downloaded fluxes to generate predictions. 20 implementations of each cluster are generated instead of 10, to estimate the uncertainties in the cluster parameters
 ```
-auriga.py test.csv --downloadFlux False --iters=20
+auriga test.csv --localFlux --iters=20 --tutorial
 ```
 
 Using previously downloaded fluxes, defining all the necessary columns
 ```
-auriga.py test.fits --downloadFlux False --gaiaFluxErrors False --g phot_g_mean_mag --bp phot_bp_mean_mag\
-   --rp phot_rp_mean_mag --j j_m --h h_m --k ks_m --ej j_msigcom --eh h_msigcom --ek ks_msigcom \
-   --eparallax parallax_error
+auriga test.fits --localFlux --gaiaFluxErrors --g phot_g_mean_mag --bp phot_bp_mean_mag \
+           --rp phot_rp_mean_mag --j j_m --h h_m --k ks_m --ej j_msigcom --eh h_msigcom \
+           --ek ks_msigcom --eparallax parallax_error --tutorial --silent
 
 ```
 
