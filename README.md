@@ -2,6 +2,12 @@
 
 Auriga neural net predicts age, extinction, and distance to stellar populations
 
+## Installation:
+
+```pip install auriga```
+(requires Python3)
+
+## Keywords:
 ```
 positional arguments:
   tableIn               Input table with Gaia DR2 source ids and cluster ids
