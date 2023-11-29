@@ -60,6 +60,8 @@ optional arguments:
                         magnitudes, column for uncertainty in BP flux
   --erpf ERPF           If uncertainties have not been converted to
                         magnitudes, column for uncertainty in RP flux
+  --memoryonly          Store table only in memory without saving to disk
+
 ```
 
 ## Examples:
@@ -79,6 +81,19 @@ auriga test.fits --localFlux --gaiaFluxErrors --g phot_g_mean_mag --bp phot_bp_m
            --rp phot_rp_mean_mag --j j_m --h h_m --k ks_m --ej j_msigcom --eh h_msigcom \
            --ek ks_msigcom --eparallax parallax_error --tutorial --silent
 
+```
+Using from within a code, outside of a command line
+```
+from auriga.auriga import main,makeparser
+import argparse
+parser=makeparser()
+dic=['test.csv',
+     '--localFlux',
+     '--memoryonly',
+     '--tutorial']
+
+args=parser.parse_args(dic)
+out=main(args)
 ```
 
 ## Required packages:

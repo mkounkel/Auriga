@@ -12,44 +12,50 @@ import os,sys
 pd.options.mode.chained_assignment = None
 import pkg_resources
 
-example_text = '''Examples:
-auriga test.fits --tableOut test-out --saveFlux test --tutorial \n
-auriga test.csv --localFlux --iters=20 --tutorial\n
-auriga test.fits --localFlux --gaiaFluxErrors --g phot_g_mean_mag --bp phot_bp_mean_mag --rp phot_rp_mean_mag --j j_m --h h_m --k ks_m --ej j_msigcom --eh h_msigcom --ek ks_msigcom --eparallax parallax_error --tutorial
-'''
 
-parser = argparse.ArgumentParser(description='Running Auriga neural net to determine age, extinction, and distance to a stellar population',epilog=example_text,formatter_class=argparse.RawDescriptionHelpFormatter)
-parser.add_argument("tableIn",help="Input table with Gaia DR2 source ids and cluster ids")
-parser.add_argument("--tutorial",help="Use included test.fits or test.csv files as inputs",action='store_true')
-parser.add_argument("--tableOut",help="Prefix of the csv file into which the cluster properties should be written, default tableIn-out",default='')
-parser.add_argument("--iters", type=int,help="Number of iterations of each cluster is passed through Auriga to generate the errors, default 10",default=10)
-parser.add_argument("--localFlux",help="Download necessary flux from Gaia archive for all source ids, default True",action='store_false')
-parser.add_argument("--saveFlux",help="If downloading flux, prefix of file where to save it, default empty",default='')
-parser.add_argument("--silent",help="Suppress print statements, default False",action='store_false')
-parser.add_argument("--cluster",help="Column with cluster membership",default='cluster')
-parser.add_argument("--source_id",help="Column with Gaia DR2 source id,",default='source_id')
-parser.add_argument("--gaiaFluxErrors",help="If loading flux, whether uncertainties in Gaia bands have been converted from flux to magnitude, default True",action='store_true')
-parser.add_argument("--g",help="If loading flux, column for G magnitude",default='g')
-parser.add_argument("--bp",help="If loading flux, column for BP magnitude",default='bp')
-parser.add_argument("--rp",help="If loading flux, column for RP magnitude",default='rp')
-parser.add_argument("--j",help="If loading flux, column for J magnitude",default='j')
-parser.add_argument("--h",help="If loading flux, column for H magnitude",default='h')
-parser.add_argument("--k",help="If loading flux, column for K magnitude",default='k')
-parser.add_argument("--parallax",help="If loading flux, column for parallax",default='parallax')
-parser.add_argument("--eg",help="If loading flux, column for uncertainty in G magnitude",default='eg')
-parser.add_argument("--ebp",help="If loading flux, column for uncertainty in BP magnitude",default='ebp')
-parser.add_argument("--erp",help="If loading flux, column for uncertainty in RP magnitude",default='erp')
-parser.add_argument("--ej",help="If loading flux, column for uncertainty in J magnitude",default='ej')
-parser.add_argument("--eh",help="If loading flux, column for uncertainty in H magnitude",default='eh')
-parser.add_argument("--ek",help="If loading flux, column for uncertainty in K magnitude",default='ek')
-parser.add_argument("--eparallax",help="If loading flux, column for uncertainty in parallax",default='eparallax')
-parser.add_argument("--gf",help="If uncertainties have not been converted to magnitudes, column for G flux",default='phot_g_mean_flux')
-parser.add_argument("--bpf",help="If uncertainties have not been converted to magnitudes, column for BP flux",default='phot_bp_mean_flux')
-parser.add_argument("--rpf",help="If uncertainties have not been converted to magnitudes, column for RP flux",default='phot_rp_mean_flux')
-parser.add_argument("--egf",help="If uncertainties have not been converted to magnitudes, column for uncertainty in G flux",default='phot_g_mean_flux_error')
-parser.add_argument("--ebpf",help="If uncertainties have not been converted to magnitudes, column for uncertainty in BP flux",default='phot_bp_mean_flux_error')
-parser.add_argument("--erpf",help="If uncertainties have not been converted to magnitudes, column for uncertainty in RP flux",default='phot_rp_mean_flux_error')
+def makeparser():
+	example_text = '''Examples:
+	auriga test.fits --tableOut test-out --saveFlux test --tutorial \n
+	auriga test.csv --localFlux --iters=20 --tutorial\n
+	auriga test.fits --localFlux --gaiaFluxErrors --g phot_g_mean_mag --bp phot_bp_mean_mag --rp phot_rp_mean_mag --j j_m --h h_m --k ks_m --ej j_msigcom --eh h_msigcom --ek ks_msigcom --eparallax parallax_error --tutorial
+	'''
+	
+	parser = argparse.ArgumentParser(description='Running Auriga neural net to determine age, extinction, and distance to a stellar population',epilog=example_text,formatter_class=argparse.RawDescriptionHelpFormatter)
+	parser.add_argument("tableIn",help="Input table with Gaia DR2 source ids and cluster ids")
+	parser.add_argument("--tutorial",help="Use included test.fits or test.csv files as inputs",action='store_true')
+	parser.add_argument("--tableOut",help="Prefix of the csv file into which the cluster properties should be written, default tableIn-out",default='')
+	parser.add_argument("--iters", type=int,help="Number of iterations of each cluster is passed through Auriga to generate the errors, default 10",default=10)
+	parser.add_argument("--localFlux",help="Download necessary flux from Gaia archive for all source ids, default True",action='store_false')
+	parser.add_argument("--saveFlux",help="If downloading flux, prefix of file where to save it, default empty",default='')
+	parser.add_argument("--silent",help="Suppress print statements, default False",action='store_false')
+	parser.add_argument("--cluster",help="Column with cluster membership",default='cluster')
+	parser.add_argument("--source_id",help="Column with Gaia DR2 source id,",default='source_id')
+	parser.add_argument("--gaiaFluxErrors",help="If loading flux, whether uncertainties in Gaia bands have been converted from flux to magnitude, default True",action='store_true')
+	parser.add_argument("--g",help="If loading flux, column for G magnitude",default='g')
+	parser.add_argument("--bp",help="If loading flux, column for BP magnitude",default='bp')
+	parser.add_argument("--rp",help="If loading flux, column for RP magnitude",default='rp')
+	parser.add_argument("--j",help="If loading flux, column for J magnitude",default='j')
+	parser.add_argument("--h",help="If loading flux, column for H magnitude",default='h')
+	parser.add_argument("--k",help="If loading flux, column for K magnitude",default='k')
+	parser.add_argument("--parallax",help="If loading flux, column for parallax",default='parallax')
+	parser.add_argument("--eg",help="If loading flux, column for uncertainty in G magnitude",default='eg')
+	parser.add_argument("--ebp",help="If loading flux, column for uncertainty in BP magnitude",default='ebp')
+	parser.add_argument("--erp",help="If loading flux, column for uncertainty in RP magnitude",default='erp')
+	parser.add_argument("--ej",help="If loading flux, column for uncertainty in J magnitude",default='ej')
+	parser.add_argument("--eh",help="If loading flux, column for uncertainty in H magnitude",default='eh')
+	parser.add_argument("--ek",help="If loading flux, column for uncertainty in K magnitude",default='ek')
+	parser.add_argument("--eparallax",help="If loading flux, column for uncertainty in parallax",default='eparallax')
+	parser.add_argument("--gf",help="If uncertainties have not been converted to magnitudes, column for G flux",default='phot_g_mean_flux')
+	parser.add_argument("--bpf",help="If uncertainties have not been converted to magnitudes, column for BP flux",default='phot_bp_mean_flux')
+	parser.add_argument("--rpf",help="If uncertainties have not been converted to magnitudes, column for RP flux",default='phot_rp_mean_flux')
+	parser.add_argument("--egf",help="If uncertainties have not been converted to magnitudes, column for uncertainty in G flux",default='phot_g_mean_flux_error')
+	parser.add_argument("--ebpf",help="If uncertainties have not been converted to magnitudes, column for uncertainty in BP flux",default='phot_bp_mean_flux_error')
+	parser.add_argument("--erpf",help="If uncertainties have not been converted to magnitudes, column for uncertainty in RP flux",default='phot_rp_mean_flux_error')
+	parser.add_argument("--memoryonly",help="Store table only in memory without saving to disk",action='store_false')
+	
+	return parser
 
+parser=makeparser()
 
 
 
@@ -166,8 +172,10 @@ def fillmissing(d):
     d['k']=d['k'].fillna(16.5)
     d['ek']=d['ek'].fillna(0)
     d['eparallax']=d['eparallax'].fillna(0.2)
-    d=d.sort_values(by=['cluster'])
-    return d
+    
+    a=np.argsort(d['cluster'])
+    dd=d.iloc[a]
+    return dd
 
 def maketensor(d,args):
     if args.silent: print('Putting together a tensor file')
@@ -242,7 +250,7 @@ def predict(clusterx,clusterref,name,args,iters=10):
     
     r['dist']=10**r['dist']
     r['edist']=r['edist']*r['dist']*np.log(10)
-    r.to_csv(name+'.csv',index=False)
+    r=Table.from_pandas(r)
     return r
 
 def tolowercase(data):
@@ -250,22 +258,17 @@ def tolowercase(data):
 	for key in keys: data[key].name=key.lower()
 	return data
     
-def main():
+def main(args):
+	print(args)
 	if len(sys.argv)==1:
 		parser.print_help(sys.stderr)
 		sys.exit(1)
-	args=parser.parse_args()
 	if args.tableOut=='': args.tableOut=args.tableIn.split('.')[0]+'-out'
 	if args.tutorial: 
 	    args.tableIn=pkg_resources.resource_filename('auriga', 'test/'+args.tableIn)
 	    if args.silent:print('Reading test file, '+args.tableIn)
 	if(os.path.exists(args.tableIn)):
-		if args.tableIn.split('.')[-1]=='fits':
-			data = tolowercase(Table.read(args.tableIn))
-		elif args.tableIn.split('.')[-1]=='csv':
-			data = pd.read_csv(args.tableIn)
-		else:
-			raise ValueError("Valid fits or csv table is required")
+		data = tolowercase(Table.read(args.tableIn))
 		
 		if args.localFlux:
 			d=fillmissing(makepandasfromadql(data,args))
@@ -273,12 +276,16 @@ def main():
 			d=fillmissing(makepandasfromdata(data,args))
 		clusterx,clusterref=maketensor(d,args)
 		r=predict(clusterx,clusterref,args.tableOut,args,iters=args.iters)
-		if args.silent:
-		    print(r)
-		    print('Written out to '+args.tableOut+'.csv')
+		
+		if args.memoryonly:
+			if args.silent:
+			    print(r)
+			    print('Written out to '+args.tableOut+'.fits')
+		return r
 	else:
 		raise ValueError("Can't find the input table")
 	
     
 if __name__ == '__main__':
-    main()
+	args=parser.parse_args()
+	main(args)
