@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
     
 setuptools.setup(
     name="Auriga",
-    version="0.2",
+    version="1.0",
     author="Marina Kounkel",
     author_email="marina.kounkel@unf.edu",
     description="A neural network for structure parameter determination",
