@@ -186,8 +186,9 @@ def fillmissing(d):
     d['ek']=d['ek'].fillna(0)
     d['eparallax']=d['eparallax'].fillna(0.2)
     
+    d=Table.from_pandas(d)
     a=np.argsort(d['cluster'])
-    dd=d.iloc[a]
+    dd=d[a]
     return dd
 
 def maketensor(d,args):
@@ -216,18 +217,19 @@ def maketensor(d,args):
             sel['j']=sel['j']+rand[3*x:4*x]*sel['ej']
             sel['h']=sel['h']+rand[4*x:5*x]*sel['eh']
             sel['k']=sel['k']+rand[5*x:6*x]*sel['ek']
-            sel['parallax']=sel['parallax'].to_numpy()+rand[6*x:7*x]*sel['eparallax']
+            sel['parallax']=sel['parallax']+rand[6*x:7*x]*sel['eparallax']
             
             a=np.random.choice(np.arange((len(sel))),250)
-            sel=sel.iloc[a]
-            sel=sel.sort_values(by=['g'])
-            clusterx[n][0][0][0:len(a)]=torch.Tensor(convunit(sel['g'],'g').to_numpy())
-            clusterx[n][0][1][0:len(a)]=torch.Tensor(convunit(sel['bp'],'bp').to_numpy())
-            clusterx[n][0][2][0:len(a)]=torch.Tensor(convunit(sel['rp'],'rp').to_numpy())
-            clusterx[n][0][3][0:len(a)]=torch.Tensor(convunit(sel['j'],'j').to_numpy())
-            clusterx[n][0][4][0:len(a)]=torch.Tensor(convunit(sel['h'],'h').to_numpy())
-            clusterx[n][0][5][0:len(a)]=torch.Tensor(convunit(sel['k'],'k').to_numpy())
-            clusterx[n][0][6][0:len(a)]=torch.Tensor(convunit(sel['parallax'],'parallax').to_numpy())   
+            sel=sel[a]
+            a=np.argsort(sel['g'])
+            sel=sel[a]
+            clusterx[n][0][0][0:len(a)]=torch.Tensor(convunit(sel['g'],'g'))
+            clusterx[n][0][1][0:len(a)]=torch.Tensor(convunit(sel['bp'],'bp'))
+            clusterx[n][0][2][0:len(a)]=torch.Tensor(convunit(sel['rp'],'rp'))
+            clusterx[n][0][3][0:len(a)]=torch.Tensor(convunit(sel['j'],'j'))
+            clusterx[n][0][4][0:len(a)]=torch.Tensor(convunit(sel['h'],'h'))
+            clusterx[n][0][5][0:len(a)]=torch.Tensor(convunit(sel['k'],'k'))
+            clusterx[n][0][6][0:len(a)]=torch.Tensor(convunit(sel['parallax'],'parallax'))   
             clusterref['cluster'][n]=i
             n=n+1
     #if save!='': pickle.save([clusterx,clusterref],open('final31.pickle','wb'))
@@ -370,5 +372,3 @@ def main():
     args=parser.parse_args()
     getClusterAge(args=args)
     
-if __name__ == '__main__':
-    main(args)

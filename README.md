@@ -72,8 +72,8 @@ Using from within a code, outside of a command line
 ```
 from auriga.auriga import getClusterAge
 t=Table.read('test.csv')
-out=main(t,localFluxes=True)
-out=main('test.csv',tutorial=True,memoryOnly=True)
+out=getClusterAge(t,localFlux=True)
+out=getClusterAge('test.csv',tutorial=True,memoryOnly=True)
 ```
 
 ## Required packages:
